@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LootBoard | Play & Win</title>
+    
+    <!-- PWA App Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff0055">
+    <meta name="theme-color" content="#ff0055">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LootBoard">
+
     <style>
         body { 
             font-family: Arial, Helvetica, sans-serif; 
@@ -61,7 +67,7 @@
             border: 2px solid #ffcc00; text-align: center; box-shadow: 0 0 30px rgba(255,204,0,0.3);
         }
         .modal-box h3 { margin-top: 0; color: #fff; font-size: 1.5em; }
-        .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;}
+        .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;}
         .chip { background: #0d0d0d; border: 2px solid #00ffcc; color: #00ffcc; padding: 12px; font-weight: bold; border-radius: 10px; cursor: pointer;}
         .chip:active { background: #00ffcc; color: #000; }
         .close-btn { background: #ff0055; color: #fff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%;}
@@ -99,7 +105,7 @@
             <div style="background: #ff0055; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; display: inline-block; margin-bottom: 15px; font-weight: bold;">
                 ⏰ Next Reset: Sunday @ 12:00 PM IST
             </div>
-            <p style="font-size: 1.1em; line-height: 1.5; margin-top: 0;">Top the weekly board to win <b>₹300 Cash via UPI</b>! Play hard, win big!</p>
+            <p style="font-size: 1.1em; line-height: 1.5; margin-top: 0;">Top the weekly cash board (Global Ranked matches only) to win <b>₹300 Cash via UPI</b>!</p>
         </div>
 
         <div class="profile-card">
@@ -116,7 +122,7 @@
         <div class="profile-card">
             <h3>Player Details</h3>
             <div class="stat-row"><span>Player ID:</span> <span style="color:#aaa;">#LB-99824</span></div>
-            <div class="stat-row"><span>Wallet Balance:</span> <span class="coin-text">5,830 🪙</span></div>
+            <div class="stat-row"><span>Wallet Balance:</span> <span class="coin-text" id="userWallet">5,000</span> 🪙</div>
         </div>
 
         <div class="profile-card">
@@ -128,8 +134,8 @@
 
         <div class="profile-card">
             <h3>Referral System Stats</h3>
-            <div class="stat-row"><span>Total Referrals:</span> <span>12 Friends</span></div>
-            <div class="stat-row"><span>Coins Earned:</span> <span class="coin-text">60,000 🪙</span></div>
+            <div class="stat-row"><span>Total Referrals:</span> <span>0 Friends</span></div>
+            <div class="stat-row"><span>Coins Earned:</span> <span class="coin-text">0 🪙</span></div>
         </div>
 
         <div class="support-links">
@@ -139,9 +145,23 @@
         </div>
     </div>
 
-    <!-- OTHER PLACEHOLDER PAGES -->
-    <div id="page-refer" class="page"><h2>👥 Invite Friends</h2><p>Content coming soon...</p></div>
-    <div id="page-spin" class="page"><h2>🎡 Watch Ads & Spin</h2><p>Content coming soon...</p></div>
+    <!-- OTHER PAGES -->
+    <div id="page-refer" class="page">
+        <h2>👥 Invite & Friends Room</h2>
+        <div class="profile-card">
+            <h3>Create Private Friend Room</h3>
+            <p style="color:#aaa; font-size:0.9em;">Play with friends securely. Note: Friend battles do not count towards the Global Cash Leaderboard to prevent cheating!</p>
+            <button class="btn-withdraw" style="background:#7a00ff; color:#fff;" onclick="createRoom()">Create Room Code</button>
+        </div>
+    </div>
+    
+    <div id="page-spin" class="page">
+        <h2>🎡 Watch Ads & Spin</h2>
+        <div class="profile-card" style="text-align:center;">
+            <p style="color:#ffcc00; font-size:1.2em; font-weight:bold;">Spin & Win Free Coins!</p>
+            <button class="btn-withdraw" style="background:#ffcc00; color:#000;" onclick="spinWheel()">Spin Now (Watch Ad)</button>
+        </div>
+    </div>
 
     <!-- STAKE SELECTION MODAL -->
     <div class="modal-overlay" id="stakeModal">
@@ -149,11 +169,11 @@
             <h3 id="modalGameTitle">Select Boot Amount</h3>
             <p style="color: #aaa; margin-bottom: 20px;">Choose table stake for <b id="gameName" style="color: #fff;">Game</b></p>
             <div class="chip-grid">
-                <div class="chip" onclick="matchmaking()">🟡 2K Coins</div>
-                <div class="chip" onclick="matchmaking()">🟢 5K Coins</div>
-                <div class="chip" onclick="matchmaking()">🔵 10K Coins</div>
-                <div class="chip" onclick="matchmaking()">🟣 100K Coins</div>
-                <div class="chip" onclick="matchmaking()" style="grid-column: span 2;">🔴 200K Coins</div>
+                <div class="chip" onclick="selectStake('2K Coins', 2000)">🟡 2K Coins</div>
+                <div class="chip" onclick="selectStake('5K Coins', 5000)">🟢 5K Coins</div>
+                <div class="chip" onclick="selectStake('10K Coins', 10000)">🔵 10K Coins</div>
+                <div class="chip" onclick="selectStake('100K Coins', 100000)">🟣 100K Coins</div>
+                <div class="chip" onclick="selectStake('200K Coins', 200000)" style="grid-column: span 2;">🔴 200K Coins</div>
             </div>
             <button class="close-btn" onclick="closeStakeModal()">❌ Cancel</button>
         </div>
@@ -168,8 +188,23 @@
         <div class="nav-item" onclick="switchPage('me', this)"><span class="nav-icon">👤</span>Me</div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT GAME ENGINE & PWA -->
     <script>
+        // Check if user already has coins saved in browser, else give 5,000 Welcome Bonus!
+        let userCoins = localStorage.getItem('lootboard_coins');
+        if (userCoins === null) {
+            userCoins = 5000;
+            localStorage.setItem('lootboard_coins', userCoins);
+            alert("🎉 Welcome to LootBoard! You received 5,000 Free Welcome Coins!");
+        } else {
+            userCoins = parseInt(userCoins);
+        }
+
+        // Page load hone par wallet balance update karo
+        window.onload = function() {
+            updateWalletDisplay();
+        };
+
         function switchPage(pageId, element) {
             const pages = document.querySelectorAll('.page');
             pages.forEach(p => p.classList.remove('active-page'));
@@ -187,12 +222,61 @@
             document.getElementById('gameName').innerText = game;
             document.getElementById('stakeModal').style.display = 'flex';
         }
+        
         function closeStakeModal() {
             document.getElementById('stakeModal').style.display = 'none';
         }
-        function matchmaking() {
-            alert("Matchmaking started...\n(Backend connect karna baki hai!)");
+
+        // Smart Bot Matchmaking + 5% Commission + Wallet Saving
+        function selectStake(amountText, stake) {
             closeStakeModal();
+
+            if (userCoins < stake) {
+                alert("❌ Not enough coins! Watch ads or refer friends to earn more.");
+                return;
+            }
+
+            // Deduct stake & save
+            userCoins -= stake;
+            saveCoins();
+
+            alert("🔍 Finding opponent for " + amountText + " table...\n🤖 Opponent Found: LootBot (AI Pro)");
+
+            setTimeout(() => {
+                let isWin = Math.random() > 0.4; // 60% win chance
+
+                if (isWin) {
+                    let totalPool = stake * 2;
+                    let commission = totalPool * 0.05; // 5% platform fee cut
+                    let winnings = totalPool - commission;
+                    
+                    userCoins += winnings;
+                    alert("🎉 VICTORY! You won the match!\n💰 Credited: +" + winnings + " Coins (after 5% platform fee)");
+                } else {
+                    alert("💔 DEFEAT! LootBot outplayed you this time.");
+                }
+                saveCoins();
+            }, 3000);
+        }
+
+        function updateWalletDisplay() {
+            document.getElementById('userWallet').innerText = userCoins.toLocaleString();
+        }
+
+        function saveCoins() {
+            localStorage.setItem('lootboard_coins', userCoins);
+            updateWalletDisplay();
+        }
+
+        function createRoom() {
+            let roomCode = Math.floor(100000 + Math.random() * 900000);
+            alert("🔒 Private Friend Room Created!\nRoom Code: " + roomCode + "\nShare this code with your friend. (Leaderboard points disabled for friendly matches).");
+        }
+
+        function spinWheel() {
+            alert("📺 Ad playing...\n🎁 Congratulations! You won 500 Free Coins!");
+            userCoins += 500;
+            saveCoins();
         }
 
         function withdrawReq() {
@@ -200,14 +284,15 @@
             if(upi == "") { alert("Please enter UPI ID first!"); }
             else { alert("Withdrawal request sent to " + upi + "!"); }
         }
-    </script>
-    <!-- App Engine Script -->
-    <script>
+
+        // Register PWA Service Worker for Mobile Installation Prompt
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('App Engine Started!'));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then((reg) => console.log('App Engine Registered Successfully!', reg.scope))
+                .catch((err) => console.log('Service Worker Error:', err));
+            });
         }
     </script>
-    
 </body>
 </html>
