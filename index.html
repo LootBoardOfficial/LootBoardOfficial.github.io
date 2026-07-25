@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LootBoard | Play & Win</title>
+    <style>
+        body { 
+            font-family: Arial, Helvetica, sans-serif; 
+            background-color: #0d0d0d; 
+            color: #ffffff; 
+            margin: 0; 
+            padding: 0; 
+            padding-bottom: 90px; 
+        }
+        
+        header { 
+            text-align: center; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #ff0055, #7a00ff); 
+            border-bottom: 3px solid #ffcc00;
+        }
+        h1 { margin: 0; font-size: 2em; text-transform: uppercase; font-weight: 900; letter-spacing: 1px;}
+        
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-size: 1.8em; margin-bottom: 20px; text-transform: uppercase; text-align: center; color: #ffcc00;}
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .game-card { 
+            background: linear-gradient(180deg, #262626, #1a1a1a); 
+            padding: 25px 10px; border-radius: 12px; font-weight: bold; 
+            font-size: 1.1em; text-transform: uppercase; text-align: center;
+            border: 2px solid #333; border-bottom: 4px solid #ff0055; 
+            cursor: pointer; transition: 0.2s;
+        }
+        .game-card:active { transform: scale(0.95); }
+        .game-icon { font-size: 2.5em; display: block; margin-bottom: 10px; }
+
+        .profile-card { background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px;}
+        .profile-card h3 { color: #00ffcc; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;}
+        .stat-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 1.1em; font-weight: bold;}
+        .coin-text { color: #ffcc00; font-size: 1.3em;}
+        
+        input[type="text"] { width: 100%; padding: 12px; box-sizing: border-box; background: #0d0d0d; color: #fff; border: 1px solid #444; border-radius: 8px; font-size: 1em; margin-bottom: 15px;}
+        .btn-withdraw { width: 100%; padding: 15px; background: #25d366; color: #000; font-weight: bold; font-size: 1.2em; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase;}
+        .btn-withdraw:hover { background: #1ebd5a; }
+
+        .support-links { text-align: center; margin-top: 30px; line-height: 2; }
+        .support-links a { color: #ff0055; text-decoration: none; font-weight: bold; }
+
+        .modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-box { 
+            background: #1a1a1a; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; 
+            border: 2px solid #ffcc00; text-align: center; box-shadow: 0 0 30px rgba(255,204,0,0.3);
+        }
+        .modal-box h3 { margin-top: 0; color: #fff; font-size: 1.5em; }
+        .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;}
+        .chip { background: #0d0d0d; border: 2px solid #00ffcc; color: #00ffcc; padding: 12px; font-weight: bold; border-radius: 10px; cursor: pointer;}
+        .chip:active { background: #00ffcc; color: #000; }
+        .close-btn { background: #ff0055; color: #fff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%;}
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #1a1a1a; border-top: 2px solid #333; display: flex; justify-content: space-around; align-items: center; padding: 8px 0; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.6); }
+        .nav-item { text-align: center; color: #888; font-size: 0.75em; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 60px; }
+        .nav-item.active { color: #ffcc00; }
+        .nav-icon { font-size: 1.8em; display: block; margin-bottom: 4px; }
+        .nav-center { position: relative; top: -20px; background: linear-gradient(135deg, #ff0055, #7a00ff); width: 70px; height: 70px; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 5px solid #0d0d0d; color: white; box-shadow: 0 5px 15px rgba(122, 0, 255, 0.6); cursor: pointer; font-size: 0.7em; font-weight: bold; text-transform: uppercase; }
+        .nav-center .nav-icon { font-size: 2em; margin-bottom: 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>LootBoard</h1>
+    </header>
+
+    <!-- HOME PAGE -->
+    <div id="page-home" class="page active-page">
+        <h2>🔥 Choose Arena</h2>
+        <div class="games-grid">
+            <div class="game-card" onclick="openStakeModal('Ludo')"><span class="game-icon">🎲</span> Ludo</div>
+            <div class="game-card" onclick="openStakeModal('Chess')"><span class="game-icon">♟️</span> Chess</div>
+            <div class="game-card" onclick="openStakeModal('Carrom')"><span class="game-icon">🥏</span> Carrom</div>
+            <div class="game-card" onclick="openStakeModal('8 Ball Pool')"><span class="game-icon">🎱</span> 8 Ball Pool</div>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD PAGE -->
+    <div id="page-board" class="page">
+        <h2 style="color: #ffcc00;">🏆 The ₹300 Weekend Clash</h2>
+        
+        <div class="profile-card" style="border-color: #7a00ff; background: #220033;">
+            <div style="background: #ff0055; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; display: inline-block; margin-bottom: 15px; font-weight: bold;">
+                ⏰ Next Reset: Sunday @ 12:00 PM IST
+            </div>
+            <p style="font-size: 1.1em; line-height: 1.5; margin-top: 0;">Top the weekly board to win <b>₹300 Cash via UPI</b>! Play hard, win big!</p>
+        </div>
+
+        <div class="profile-card">
+            <h3>📜 Hall of Fame (Past Winners)</h3>
+            <div class="stat-row"><span>Week 1: <b>Rohan_King</b></span> <span style="color: #25d366;">₹300 (Paid)</span></div>
+            <div class="stat-row"><span>Week 2: <b>ProGamer_99</b></span> <span style="color: #25d366;">₹300 (Paid)</span></div>
+        </div>
+    </div>
+
+    <!-- ME PAGE (PROFILE) -->
+    <div id="page-me" class="page">
+        <h2>👤 Player Profile</h2>
+        
+        <div class="profile-card">
+            <h3>Player Details</h3>
+            <div class="stat-row"><span>Player ID:</span> <span style="color:#aaa;">#LB-99824</span></div>
+            <div class="stat-row"><span>Wallet Balance:</span> <span class="coin-text">5,830 🪙</span></div>
+        </div>
+
+        <div class="profile-card">
+            <h3>Withdraw Winnings</h3>
+            <p style="color: #aaa; font-size: 0.9em;">Enter your UPI ID to transfer your coins directly to your bank.</p>
+            <input type="text" placeholder="e.g. 9876543210@ybl" id="upiId">
+            <button class="btn-withdraw" onclick="withdrawReq()">Withdraw</button>
+        </div>
+
+        <div class="profile-card">
+            <h3>Referral System Stats</h3>
+            <div class="stat-row"><span>Total Referrals:</span> <span>12 Friends</span></div>
+            <div class="stat-row"><span>Coins Earned:</span> <span class="coin-text">60,000 🪙</span></div>
+        </div>
+
+        <div class="support-links">
+            <p>Need Help?</p>
+            <a href="#">💬 WhatsApp Support</a><br>
+            <a href="#">📧 Email: help@lootboard.com</a>
+        </div>
+    </div>
+
+    <!-- OTHER PLACEHOLDER PAGES -->
+    <div id="page-refer" class="page"><h2>👥 Invite Friends</h2><p>Content coming soon...</p></div>
+    <div id="page-spin" class="page"><h2>🎡 Watch Ads & Spin</h2><p>Content coming soon...</p></div>
+
+    <!-- STAKE SELECTION MODAL -->
+    <div class="modal-overlay" id="stakeModal">
+        <div class="modal-box">
+            <h3 id="modalGameTitle">Select Boot Amount</h3>
+            <p style="color: #aaa; margin-bottom: 20px;">Choose table stake for <b id="gameName" style="color: #fff;">Game</b></p>
+            <div class="chip-grid">
+                <div class="chip" onclick="matchmaking()">🟡 2K Coins</div>
+                <div class="chip" onclick="matchmaking()">🟢 5K Coins</div>
+                <div class="chip" onclick="matchmaking()">🔵 10K Coins</div>
+                <div class="chip" onclick="matchmaking()">🟣 100K Coins</div>
+                <div class="chip" onclick="matchmaking()" style="grid-column: span 2;">🔴 200K Coins</div>
+            </div>
+            <button class="close-btn" onclick="closeStakeModal()">❌ Cancel</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage('home', this)"><span class="nav-icon">🏠</span>Home</div>
+        <div class="nav-item" onclick="switchPage('refer', this)"><span class="nav-icon">👥</span>Refer</div>
+        <div class="nav-center" onclick="switchPage('spin', null)"><span class="nav-icon">📺</span>Ads</div>
+        <div class="nav-item" onclick="switchPage('board', this)"><span class="nav-icon">🏆</span>Board</div>
+        <div class="nav-item" onclick="switchPage('me', this)"><span class="nav-icon">👤</span>Me</div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        function switchPage(pageId, element) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active-page'));
+            
+            document.getElementById('page-' + pageId).classList.add('active-page');
+
+            if(element) {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(nav => nav.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
+
+        function openStakeModal(game) {
+            document.getElementById('gameName').innerText = game;
+            document.getElementById('stakeModal').style.display = 'flex';
+        }
+        function closeStakeModal() {
+            document.getElementById('stakeModal').style.display = 'none';
+        }
+        function matchmaking() {
+            alert("Matchmaking started...\n(Backend connect karna baki hai!)");
+            closeStakeModal();
+        }
+
+        function withdrawReq() {
+            let upi = document.getElementById('upiId').value;
+            if(upi == "") { alert("Please enter UPI ID first!"); }
+            else { alert("Withdrawal request sent to " + upi + "!"); }
+        }
+    </script>
+
+</body>
+</html>
