@@ -1,0 +1,16 @@
+{
+  "name": "LootBoard Gaming Arena",
+  "short_name": "LootBoard",
+  "description": "Play Ludo, Chess & Win Real Cash!",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0d0d0d",
+  "theme_color": "#ff0055",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/866/866011.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
