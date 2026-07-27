@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LootBoard | Play & Win</title>
+    <title>LootBoard | Spin & Win</title>
     
     <!-- PWA App Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
@@ -35,264 +35,357 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         h2 { font-size: 1.8em; margin-bottom: 20px; text-transform: uppercase; text-align: center; color: #ffcc00;}
-        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .game-card { 
-            background: linear-gradient(180deg, #262626, #1a1a1a); 
-            padding: 25px 10px; border-radius: 12px; font-weight: bold; 
-            font-size: 1.1em; text-transform: uppercase; text-align: center;
-            border: 2px solid #333; border-bottom: 4px solid #ff0055; 
-            cursor: pointer; transition: 0.2s;
-        }
-        .game-card:active { transform: scale(0.95); }
-        .game-icon { font-size: 2.5em; display: block; margin-bottom: 10px; }
-
+        
         .profile-card { background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px;}
         .profile-card h3 { color: #00ffcc; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;}
-        .stat-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 1.1em; font-weight: bold;}
+        .stat-row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; font-size: 1.1em; font-weight: bold;}
         .coin-text { color: #ffcc00; font-size: 1.3em;}
         
-        input[type="text"] { width: 100%; padding: 12px; box-sizing: border-box; background: #0d0d0d; color: #fff; border: 1px solid #444; border-radius: 8px; font-size: 1em; margin-bottom: 15px;}
-        .btn-withdraw { width: 100%; padding: 15px; background: #25d366; color: #000; font-weight: bold; font-size: 1.2em; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase;}
-        .btn-withdraw:hover { background: #1ebd5a; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 14px; box-sizing: border-box; background: #0d0d0d; color: #fff; border: 1px solid #444; border-radius: 8px; font-size: 1.1em; margin-bottom: 15px;}
+        
+        .btn-main { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff0055, #7a00ff); color: #fff; font-weight: bold; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; margin-top: 10px;}
+        .btn-main:hover { opacity: 0.9; }
 
-        .support-links { text-align: center; margin-top: 30px; line-height: 2; }
-        .support-links a { color: #ff0055; text-decoration: none; font-weight: bold; }
+        .btn-google { width: 100%; padding: 15px; background: #ffffff; color: #000; font-weight: bold; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        .btn-google:hover { background: #f1f1f1; }
 
-        .modal-overlay { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+        /* AUTH OVERLAY MODAL */
+        .auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0d0d0d; z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;
         }
-        .modal-box { 
-            background: #1a1a1a; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; 
-            border: 2px solid #ffcc00; text-align: center; box-shadow: 0 0 30px rgba(255,204,0,0.3);
+        .auth-box {
+            background: #1a1a1a; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px;
+            border: 2px solid #ff0055; text-align: center; box-shadow: 0 0 30px rgba(255,0,85,0.4);
         }
-        .modal-box h3 { margin-top: 0; color: #fff; font-size: 1.5em; }
-        .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;}
-        .chip { background: #0d0d0d; border: 2px solid #00ffcc; color: #00ffcc; padding: 12px; font-weight: bold; border-radius: 10px; cursor: pointer;}
-        .chip:active { background: #00ffcc; color: #000; }
-        .close-btn { background: #ff0055; color: #fff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%;}
+
+        /* REAL SPIN WHEEL STYLING WITH LABELS */
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        .wheel-pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 35px solid #ffcc00; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 10; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.7)); }
+        
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 8px solid #ffcc00; position: relative; overflow: hidden;
+            background: conic-gradient(
+                #ff0055 0deg 51.4deg, 
+                #7a00ff 51.4deg 102.8deg, 
+                #00ffcc 102.8deg 154.2deg, 
+                #ffcc00 154.2deg 205.6deg, 
+                #ff5722 205.6deg 257deg, 
+                #3f51b5 257deg 308.4deg, 
+                #4caf50 308.4deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+            box-shadow: 0 0 25px rgba(255,204,0,0.5);
+        }
+
+        .wheel-label {
+            position: absolute; width: 50%; height: 50px; top: 50%; left: 50%;
+            transform-origin: 0% 0%; text-align: right; padding-right: 25px;
+            font-size: 0.85em; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;
+        }
+
+        .wheel-center-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 75px; height: 75px; background: #0d0d0d; border: 4px solid #ffcc00;
+            border-radius: 50%; color: #fff; font-weight: bold; font-size: 0.9em;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8); z-index: 5; text-transform: uppercase;
+        }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #1a1a1a; border-top: 2px solid #333; display: flex; justify-content: space-around; align-items: center; padding: 8px 0; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.6); }
         .nav-item { text-align: center; color: #888; font-size: 0.75em; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 60px; }
         .nav-item.active { color: #ffcc00; }
         .nav-icon { font-size: 1.8em; display: block; margin-bottom: 4px; }
-        .nav-center { position: relative; top: -20px; background: linear-gradient(135deg, #ff0055, #7a00ff); width: 70px; height: 70px; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 5px solid #0d0d0d; color: white; box-shadow: 0 5px 15px rgba(122, 0, 255, 0.6); cursor: pointer; font-size: 0.7em; font-weight: bold; text-transform: uppercase; }
-        .nav-center .nav-icon { font-size: 2em; margin-bottom: 0; }
     </style>
 </head>
 <body>
+
+    <!-- ONE-TAP GOOGLE LOGIN MODAL -->
+    <div class="auth-overlay" id="authModal">
+        <div class="auth-box">
+            <h2 style="color:#ffcc00; margin-top:0;">🚀 Welcome to LootBoard</h2>
+            <p style="color:#aaa; font-size:0.9em; margin-bottom:25px;">Sign in with Google to protect your coins & spins permanently!</p>
+            
+            <button class="btn-google" type="button" onclick="loginWithGoogle()">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.16 21.32 7.22 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.39l4.09-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.16 2.68 1.18 6.61l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+                Sign in with Google ⚡
+            </button>
+        </div>
+    </div>
 
     <header>
         <h1>LootBoard</h1>
     </header>
 
-    <!-- HOME PAGE -->
-    <div id="page-home" class="page active-page">
-        <h2>🔥 Choose Arena</h2>
-        <div class="games-grid">
-            <div class="game-card" onclick="openStakeModal('Ludo')"><span class="game-icon">🎲</span> Ludo</div>
-            <div class="game-card" onclick="openStakeModal('Chess')"><span class="game-icon">♟️</span> Chess</div>
-            <div class="game-card" onclick="openStakeModal('Carrom')"><span class="game-icon">🥏</span> Carrom</div>
-            <div class="game-card" onclick="openStakeModal('8 Ball Pool')"><span class="game-icon">🎱</span> 8 Ball Pool</div>
+    <!-- SPIN & WIN PAGE -->
+    <div id="page-spin" class="page active-page">
+        <h2>🎡 Spin & Win Rewards</h2>
+        
+        <div class="profile-card" style="text-align: center;">
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="pieWheel">
+                    <div class="wheel-label" style="transform: rotate(25deg);">1K 🪙</div>
+                    <div class="wheel-label" style="transform: rotate(76deg);">2 Spins 🎟️</div>
+                    <div class="wheel-label" style="transform: rotate(128deg);">5K 🪙</div>
+                    <div class="wheel-label" style="transform: rotate(179deg);">Better Luck 😢</div>
+                    <div class="wheel-label" style="transform: rotate(230deg);">3K 🪙</div>
+                    <div class="wheel-label" style="transform: rotate(282deg);">5 Spins 🎟️</div>
+                    <div class="wheel-label" style="transform: rotate(333deg);">10K 🔥</div>
+                </div>
+                <div class="wheel-center-btn" onclick="spinWheel()">SPIN</div>
+            </div>
+            
+            <p style="font-size: 1.2em; font-weight: bold; margin-top: 15px;">Available Spins: <span id="spinCount" style="color: #00ffcc; font-size: 1.3em;">5</span> 🎟️</p>
+        </div>
+
+        <div class="profile-card">
+            <h3>🎁 Earn More Free Spins</h3>
+            <div class="stat-row">
+                <span>Watch Ad (Get 5 Spins):</span> 
+                <button onclick="watchAd()" style="background:#25d366; color:#000; border:none; padding:8px 15px; font-weight:bold; border-radius:6px; cursor:pointer;">Watch Ad</button>
+            </div>
+            <div class="stat-row">
+                <span>Daily Login Bonus (5 Spins):</span> 
+                <button id="dailyBtn" onclick="claimDaily()" style="background:#7a00ff; color:#fff; border:none; padding:8px 15px; font-weight:bold; border-radius:6px; cursor:pointer;">Claim (5 Spins)</button>
+            </div>
         </div>
     </div>
 
     <!-- LEADERBOARD PAGE -->
     <div id="page-board" class="page">
-        <h2 style="color: #ffcc00;">🏆 The ₹300 Weekend Clash</h2>
-        
-        <div class="profile-card" style="border-color: #7a00ff; background: #220033;">
-            <div style="background: #ff0055; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; display: inline-block; margin-bottom: 15px; font-weight: bold;">
-                ⏰ Next Reset: Sunday @ 12:00 PM IST
-            </div>
-            <p style="font-size: 1.1em; line-height: 1.5; margin-top: 0;">Top the weekly cash board (Global Ranked matches only) to win <b>₹300 Cash via UPI</b>!</p>
-        </div>
-
+        <h2>🏆 Top Earners Leaderboard</h2>
         <div class="profile-card">
-            <h3>📜 Hall of Fame (Past Winners)</h3>
-            <div class="stat-row"><span>Week 1: <b>Rohan_King</b></span> <span style="color: #25d366;">₹300 (Paid)</span></div>
-            <div class="stat-row"><span>Week 2: <b>ProGamer_99</b></span> <span style="color: #25d366;">₹300 (Paid)</span></div>
+            <h3>Live Coin Rankings</h3>
+            <div class="stat-row"><span>1. 🥇 Gamer_King99</span> <span class="coin-text">45,000 🪙</span></div>
+            <div class="stat-row"><span>2. 🥈 Pro_Ninja</span> <span class="coin-text">38,500 🪙</span></div>
+            <div class="stat-row"><span>3. 🥉 LootMaster</span> <span class="coin-text">29,000 🪙</span></div>
+            <div class="stat-row" style="border-top: 1px solid #333; padding-top: 10px; margin-top: 15px;"><span>You (Rank):</span> <span class="coin-text" id="myRankCoins">5,000 🪙</span></div>
         </div>
     </div>
 
-    <!-- ME PAGE (PROFILE) -->
-    <div id="page-me" class="page">
-        <h2>👤 Player Profile</h2>
-        
-        <div class="profile-card">
-            <h3>Player Details</h3>
-            <div class="stat-row"><span>Player ID:</span> <span style="color:#aaa;">#LB-99824</span></div>
-            <div class="stat-row"><span>Wallet Balance:</span> <span class="coin-text" id="userWallet">5,000</span> 🪙</div>
-        </div>
-
-        <div class="profile-card">
-            <h3>Withdraw Winnings</h3>
-            <p style="color: #aaa; font-size: 0.9em;">Enter your UPI ID to transfer your coins directly to your bank.</p>
-            <input type="text" placeholder="e.g. 9876543210@ybl" id="upiId">
-            <button class="btn-withdraw" onclick="withdrawReq()">Withdraw</button>
-        </div>
-
-        <div class="profile-card">
-            <h3>Referral System Stats</h3>
-            <div class="stat-row"><span>Total Referrals:</span> <span>0 Friends</span></div>
-            <div class="stat-row"><span>Coins Earned:</span> <span class="coin-text">0 🪙</span></div>
-        </div>
-
-        <div class="support-links">
-            <p>Need Help?</p>
-            <a href="#">💬 WhatsApp Support</a><br>
-            <a href="#">📧 Email: help@lootboard.com</a>
-        </div>
-    </div>
-
-    <!-- OTHER PAGES -->
+    <!-- REFER A FRIEND PAGE -->
     <div id="page-refer" class="page">
-        <h2>👥 Invite & Friends Room</h2>
-        <div class="profile-card">
-            <h3>Create Private Friend Room</h3>
-            <p style="color:#aaa; font-size:0.9em;">Play with friends securely. Note: Friend battles do not count towards the Global Cash Leaderboard to prevent cheating!</p>
-            <button class="btn-withdraw" style="background:#7a00ff; color:#fff;" onclick="createRoom()">Create Room Code</button>
-        </div>
-    </div>
-    
-    <div id="page-spin" class="page">
-        <h2>🎡 Watch Ads & Spin</h2>
-        <div class="profile-card" style="text-align:center;">
-            <p style="color:#ffcc00; font-size:1.2em; font-weight:bold;">Spin & Win Free Coins!</p>
-            <button class="btn-withdraw" style="background:#ffcc00; color:#000;" onclick="spinWheel()">Spin Now (Watch Ad)</button>
+        <h2>👥 Refer & Earn</h2>
+        <div class="profile-card" style="text-align: center;">
+            <p style="font-size: 1.1em; line-height: 1.5;">Share your unique invite link with friends. When they join, you get <b style="color:#00ffcc;">7 Free Spins</b> instantly!</p>
+            <input type="text" id="myRefLink" readonly style="text-align:center; font-weight:bold; color:#00ffcc;" value="">
+            <button class="btn-main" onclick="shareRefLink()">Copy Referral Link 🔗</button>
+            <div class="stat-row" style="margin-top: 20px; justify-content: center;"><span>Total Referrals: <b id="refCount" style="color:#ffcc00;">0 Friends</b></span></div>
         </div>
     </div>
 
-    <!-- STAKE SELECTION MODAL -->
-    <div class="modal-overlay" id="stakeModal">
-        <div class="modal-box">
-            <h3 id="modalGameTitle">Select Boot Amount</h3>
-            <p style="color: #aaa; margin-bottom: 20px;">Choose table stake for <b id="gameName" style="color: #fff;">Game</b></p>
-            <div class="chip-grid">
-                <div class="chip" onclick="selectStake('2K Coins', 2000)">🟡 2K Coins</div>
-                <div class="chip" onclick="selectStake('5K Coins', 5000)">🟢 5K Coins</div>
-                <div class="chip" onclick="selectStake('10K Coins', 10000)">🔵 10K Coins</div>
-                <div class="chip" onclick="selectStake('100K Coins', 100000)">🟣 100K Coins</div>
-                <div class="chip" onclick="selectStake('200K Coins', 200000)" style="grid-column: span 2;">🔴 200K Coins</div>
-            </div>
-            <button class="close-btn" onclick="closeStakeModal()">❌ Cancel</button>
+    <!-- PROFILE & REDEEM PAGE -->
+    <div id="page-me" class="page">
+        <h2>👤 My Profile & Redeem</h2>
+        
+        <div class="profile-card">
+            <h3>Account Details</h3>
+            <div class="stat-row"><span>Google Account:</span> <span style="color:#00ffcc; font-size:0.9em;" id="profileUserDisplay">User</span></div>
+            <div class="stat-row"><span>Total Wallet Coins:</span> <span class="coin-text" id="userWallet">5,000</span> 🪙</div>
+            <button onclick="logout()" style="background:#ff0055; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-weight:bold; margin-top:10px; cursor:pointer;">Logout 🚪</button>
+        </div>
+
+        <div class="profile-card">
+            <h3>🎮 Request Redeem Code</h3>
+            <p style="color: #aaa; font-size: 0.9em;">Enter your Gmail address to receive your gaming redeem code voucher directly in your inbox.</p>
+            <input type="email" placeholder="Enter your Gmail for code" id="redeemEmail">
+            <button class="btn-main" onclick="requestRedeemCode()">Request Redeem Code</button>
+        </div>
+
+        <div class="profile-card">
+            <h3>Bank / UPI Payout</h3>
+            <input type="text" placeholder="Enter UPI ID (e.g. user@paytm)" id="upiId">
+            <button class="btn-main" style="background: #25d366; color:#000;" onclick="withdrawReq()">Save UPI</button>
         </div>
     </div>
 
     <!-- BOTTOM NAV -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchPage('home', this)"><span class="nav-icon">🏠</span>Home</div>
-        <div class="nav-item" onclick="switchPage('refer', this)"><span class="nav-icon">👥</span>Refer</div>
-        <div class="nav-center" onclick="switchPage('spin', null)"><span class="nav-icon">📺</span>Ads</div>
+        <div class="nav-item active" onclick="switchPage('spin', this)"><span class="nav-icon">🎡</span>Spin</div>
         <div class="nav-item" onclick="switchPage('board', this)"><span class="nav-icon">🏆</span>Board</div>
-        <div class="nav-item" onclick="switchPage('me', this)"><span class="nav-icon">👤</span>Me</div>
+        <div class="nav-item" onclick="switchPage('refer', this)"><span class="nav-icon">👥</span>Refer</div>
+        <div class="nav-item" onclick="switchPage('me', this)"><span class="nav-icon">👤</span>Profile</div>
     </div>
 
-    <!-- JAVASCRIPT GAME ENGINE & PWA -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Check if user already has coins saved in browser, else give 5,000 Welcome Bonus!
-        let userCoins = localStorage.getItem('lootboard_coins');
-        if (userCoins === null) {
-            userCoins = 5000;
-            localStorage.setItem('lootboard_coins', userCoins);
-            alert("🎉 Welcome to LootBoard! You received 5,000 Free Welcome Coins!");
-        } else {
-            userCoins = parseInt(userCoins);
+        let userCoins = parseInt(localStorage.getItem('lb_coins')) || 5000;
+        let spinCount = parseInt(localStorage.getItem('lb_spins')) || 5;
+        let refCount = parseInt(localStorage.getItem('lb_refs')) || 0;
+        let loggedUser = localStorage.getItem('lb_google_user') || '';
+        let lastClaimDate = localStorage.getItem('lb_last_claim') || '';
+
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        window.onload = function() {
+            if (loggedUser !== '') {
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('profileUserDisplay').innerText = loggedUser;
+            } else {
+                document.getElementById('authModal').style.display = 'flex';
+            }
+            generateReferralLink();
+            checkDailyClaimStatus();
+            updateUI();
+        };
+
+        // ONE-TAP GOOGLE LOGIN SIMULATION (Fast Popup & Permanent Safe Storage)
+        function loginWithGoogle() {
+            // Simulated instant Google account picker popup
+            let mockGmail = prompt("🔗 Select / Enter your Google Gmail account to continue:", "gamerking@gmail.com");
+            
+            if (mockGmail && mockGmail.includes("@")) {
+                loggedUser = mockGmail;
+                localStorage.setItem('lb_google_user', loggedUser);
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('profileUserDisplay').innerText = loggedUser;
+                generateReferralLink();
+                alert("🎉 Successfully Signed in with Google!\nYour coins & spins are now secured permanently.");
+            } else {
+                alert("❌ Please enter a valid Gmail address to login.");
+            }
         }
 
-        // Page load hone par wallet balance update karo
-        window.onload = function() {
-            updateWalletDisplay();
-        };
+        function generateReferralLink() {
+            let uniqueId = loggedUser ? btoa(loggedUser).substring(0, 6) : "USER99";
+            let refLink = "https://lootboardofficial.github.io/?ref=" + uniqueId;
+            document.getElementById('myRefLink').value = refLink;
+        }
+
+        function logout() {
+            localStorage.removeItem('lb_google_user');
+            location.reload();
+        }
 
         function switchPage(pageId, element) {
             const pages = document.querySelectorAll('.page');
             pages.forEach(p => p.classList.remove('active-page'));
-            
             document.getElementById('page-' + pageId).classList.add('active-page');
 
-            if(element) {
-                const navItems = document.querySelectorAll('.nav-item');
-                navItems.forEach(nav => nav.classList.remove('active'));
-                element.classList.add('active');
-            }
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(nav => nav.classList.remove('active'));
+            if(element) element.classList.add('active');
         }
 
-        function openStakeModal(game) {
-            document.getElementById('gameName').innerText = game;
-            document.getElementById('stakeModal').style.display = 'flex';
-        }
-        
-        function closeStakeModal() {
-            document.getElementById('stakeModal').style.display = 'none';
-        }
-
-        // Smart Bot Matchmaking + 5% Commission + Wallet Saving
-        function selectStake(amountText, stake) {
-            closeStakeModal();
-
-            if (userCoins < stake) {
-                alert("❌ Not enough coins! Watch ads or refer friends to earn more.");
-                return;
-            }
-
-            // Deduct stake & save
-            userCoins -= stake;
-            saveCoins();
-
-            alert("🔍 Finding opponent for " + amountText + " table...\n🤖 Opponent Found: LootBot (AI Pro)");
-
-            setTimeout(() => {
-                let isWin = Math.random() > 0.4; // 60% win chance
-
-                if (isWin) {
-                    let totalPool = stake * 2;
-                    let commission = totalPool * 0.05; // 5% platform fee cut
-                    let winnings = totalPool - commission;
-                    
-                    userCoins += winnings;
-                    alert("🎉 VICTORY! You won the match!\n💰 Credited: +" + winnings + " Coins (after 5% platform fee)");
-                } else {
-                    alert("💔 DEFEAT! LootBot outplayed you this time.");
-                }
-                saveCoins();
-            }, 3000);
-        }
-
-        function updateWalletDisplay() {
+        function updateUI() {
             document.getElementById('userWallet').innerText = userCoins.toLocaleString();
-        }
-
-        function saveCoins() {
-            localStorage.setItem('lootboard_coins', userCoins);
-            updateWalletDisplay();
-        }
-
-        function createRoom() {
-            let roomCode = Math.floor(100000 + Math.random() * 900000);
-            alert("🔒 Private Friend Room Created!\nRoom Code: " + roomCode + "\nShare this code with your friend. (Leaderboard points disabled for friendly matches).");
+            document.getElementById('spinCount').innerText = spinCount;
+            document.getElementById('myRankCoins').innerText = userCoins.toLocaleString() + " 🪙";
+            document.getElementById('refCount').innerText = refCount + " Friends";
+            
+            localStorage.setItem('lb_coins', userCoins);
+            localStorage.setItem('lb_spins', spinCount);
+            localStorage.setItem('lb_refs', refCount);
         }
 
         function spinWheel() {
-            alert("📺 Ad playing...\n🎁 Congratulations! You won 500 Free Coins!");
-            userCoins += 500;
-            saveCoins();
+            if (isSpinning) return;
+            if (spinCount <= 0) {
+                alert("❌ No spins left! Watch ads or refer friends to get more spins.");
+                return;
+            }
+
+            spinCount--;
+            updateUI();
+            isSpinning = true;
+
+            const rewards = [
+                { type: 'coin', val: 1000, text: '1,000 Coins! 🪙' },
+                { type: 'spin', val: 2, text: '2 Free Spins! 🎟️' },
+                { type: 'coin', val: 5000, text: '5,000 Coins! 🪙' },
+                { type: 'none', val: 0, text: 'Better Luck Next Time! 😢' },
+                { type: 'coin', val: 3000, text: '3,000 Coins! 🪙' },
+                { type: 'spin', val: 5, text: '5 Free Spins! 🎟️' },
+                { type: 'coin', val: 10000, text: '10,000 Coins! 🔥' }
+            ];
+
+            let rand = Math.random();
+            let randomIndex;
+            if (rand < 0.05) randomIndex = 6;
+            else if (rand < 0.20) randomIndex = 3;
+            else if (rand < 0.40) randomIndex = 0;
+            else if (rand < 0.60) randomIndex = 4;
+            else if (rand < 0.75) randomIndex = 2;
+            else if (rand < 0.90) randomIndex = 1;
+            else randomIndex = 5;
+
+            let selectedReward = rewards[randomIndex];
+            let degreePerSlice = 360 / rewards.length;
+            let extraSpins = 360 * 5; 
+            let targetDegree = extraSpins + (randomIndex * degreePerSlice) + (degreePerSlice / 2);
+
+            currentRotation += targetDegree;
+            const wheel = document.getElementById('pieWheel');
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                if (selectedReward.type === 'coin') {
+                    userCoins += selectedReward.val;
+                    alert("🎉 CONGRATULATIONS!\nYou won " + selectedReward.text);
+                } else if (selectedReward.type === 'spin') {
+                    spinCount += selectedReward.val;
+                    alert("🎁 BONUS SPINS!\nYou won " + selectedReward.text);
+                } else {
+                    alert("😢 " + selectedReward.text);
+                }
+                updateUI();
+            }, 4000);
         }
 
-        function withdrawReq() {
-            let upi = document.getElementById('upiId').value;
-            if(upi == "") { alert("Please enter UPI ID first!"); }
-            else { alert("Withdrawal request sent to " + upi + "!"); }
+        function watchAd() {
+            alert("📺 Playing Ad... (Simulation)\n🎁 Success! 5 Free Spins added!");
+            spinCount += 5;
+            updateUI();
         }
 
-        // Register PWA Service Worker for Mobile Installation Prompt
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                .then((reg) => console.log('App Engine Registered Successfully!', reg.scope))
-                .catch((err) => console.log('Service Worker Error:', err));
-            });
+        function checkDailyClaimStatus() {
+            let today = new Date().toDateString();
+            if (lastClaimDate === today) {
+                let btn = document.getElementById('dailyBtn');
+                btn.innerText = "Claimed Today ✅";
+                btn.style.background = "#444";
+                btn.disabled = true;
+            }
         }
-    </script>
-</body>
-</html>
+
+        function claimDaily() {
+            let today = new Date().toDateString();
+            if (lastClaimDate === today) {
+                alert("⚠️ You have already claimed your Daily Bonus today! Come back tomorrow.");
+                return;
+            }
+
+            spinCount += 5;
+            lastClaimDate = today;
+            localStorage.setItem('lb_last_claim', lastClaimDate);
+            
+            alert("✅ Daily Login Bonus Claimed!\n🎁 +5 Free Spins added!");
+            checkDailyClaimStatus();
+            updateUI();
+        }
+
+        function shareRefLink() {
+            let linkBox = document.getElementById('myRefLink');
+            linkBox.select();
+            navigator.clipboard.writeText(linkBox.value);
+            refCount++;
+            spinCount += 7;
+            alert("🔗 Referral Link Copied to Clipboard!\n🎁 +7 Free Spins added as bonus!");
+            updateUI();
+        }
+
+        function requestRedeemCode() {
+            let email = document.getElementById('redeemEmail').value;
+            if (email === "") {
+                alert("❌ Please enter your Gmail address!");
+                return;
+            }
+            if (userCoins < 10000) {
+                alert("⚠️ Minimum 10,000 Coins required to request a Redeem Code!");
+                return;
+            }
+            alert("✅ Redeem request submitted successfully!\n
